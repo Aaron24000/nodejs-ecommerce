@@ -3,9 +3,16 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const session = require('express-session')
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+
+const MONGODB_URI = "mongodb+srv://aaronnobles:Vg2hJxZ1MMnBVWpy@cluster0.ocpqi.mongodb.net/shop?authSource=admin&replicaSet=atlas-ifv0u0-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true";
 
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions',
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -19,6 +26,7 @@ const User = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, store: store}));
 
 app.use((req, res, next) => {
   User.findById("606b504473f0073a483e8335")
@@ -38,9 +46,7 @@ app.use(authRoutes);
 app.use(get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://aaronnobles:Vg2hJxZ1MMnBVWpy@cluster0.ocpqi.mongodb.net/shop?authSource=admin&replicaSet=atlas-ifv0u0-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {

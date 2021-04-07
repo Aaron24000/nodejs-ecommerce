@@ -1,19 +1,7 @@
-// exports.getLogin = (req, res, next) => {
-//   const isLoggedIn = req.get("Cookie").split(";")[1].trim().split("=")[1];
-//   console.log(isLoggedIn);
-//   res.render("auth/login", {
-//     path: "/login",
-//     pageTitle: "Login",
-//     isAuthenticated: isLoggedIn,
-//   });
-// };
+const User = require('../models/user');
+
 
 exports.getLogin = (req, res, next) => {
-//   const isLoggedIn = req.get("Cookie")
-//   //   .split(';')[1]
-//   //   .trim()
-//     .split('=')[1] === 'true';
-//   console.log(isLoggedIn);
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
@@ -22,18 +10,19 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  res.setHeader("Set-Cookie", "loggedIn=true; HttpOnly");
-  res.redirect("/");
+  User.findById('606b504473f0073a483e8335')
+    .then(user => {
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      res.redirect('/');
+    })
+    .catch(err => console.log(err));
 };
 
-// exports.getLogin = (req, res, next) => {
-//     let isAuthentication = false;
-//     let cookieString = req.get('Cookie');
-//     if(cookieString){
-//      let cookieArray =  cookieString.split(';');
-//       cookieArray.forEach( (cookie) => {
-//         if(cookie.includes('loggedIn')){
-//           isAuthentication = cookie.split('=')[1] == 'true';
-//         }
-//       })
-//     }
+exports.postLogout = (req, res, next) => {
+  req.session.destroy((err) => {
+    console.log(err);
+    res.redirect('/');
+  })
+};
+
