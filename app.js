@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const MONGODB_URI =
   "mongodb+srv://aaronnobles:Vg2hJxZ1MMnBVWpy@cluster0.ocpqi.mongodb.net/shop?authSource=admin&replicaSet=atlas-ifv0u0-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true";
@@ -39,6 +40,7 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
