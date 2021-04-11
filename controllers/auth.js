@@ -112,51 +112,12 @@ exports.postLogin = (req, res, next) => {
           res.redirect('/login');
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
-
-// exports.postSignup = (req, res, next) => {
-//   const email = req.body.email;
-//   const password = req.body.password;
-
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     console.log(errors.array());
-//     return res.status(422).render("auth/signup", {
-//       path: "/signup",
-//       pageTitle: "Signup",
-//       errorMessage: errors.array()[0].msg,
-//       oldInput: {
-//         email: email,
-//         password: password,
-//         confirmPassword: req.body.confirmPassword,
-//       },
-//       validationErrors: errors.array()
-//     });
-//   }
-//   bcrypt
-//     .hash(password, 12)
-//     .then((hashedPassword) => {
-//       const user = new User({
-//         email: email,
-//         password: hashedPassword,
-//         cart: { items: [] },
-//       });
-//       return user.save();
-//     })
-//     .then((result) => {
-//       res.redirect("/login");
-//       return transporter.sendMail({
-//         to: email,
-//         from: "sirnoblestest2@outlook.com",
-//         subject: "Signup succeeded!",
-//         html: "<h1>You successfully signed up!</h1>",
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
 
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
@@ -190,15 +151,11 @@ exports.postSignup = (req, res, next) => {
     })
     .then(result => {
       res.redirect('/login');
-      // return transporter.sendMail({
-      //   to: email,
-      //   from: 'shop@node-complete.com',
-      //   subject: 'Signup succeeded!',
-      //   html: '<h1>You successfully signed up!</h1>'
-      // });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -250,8 +207,10 @@ exports.postReset = (req, res, next) => {
         <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to reset a new password.</p>`,
         });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
   });
 };
@@ -274,8 +233,10 @@ exports.getNewPassword = (req, res, next) => {
         passwordToken: token,
       });
     })
-    .catch((err) => {
-      console.log(err);
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -303,7 +264,9 @@ exports.postNewPassword = (req, res, next) => {
     .then((result) => {
       res.redirect("/login");
     })
-    .catch((err) => {
-      console.log(err);
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
