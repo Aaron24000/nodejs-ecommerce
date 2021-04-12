@@ -42,8 +42,6 @@ exports.getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        // isAuthenticated: req.session.isLoggedIn,
-        // csrfToken: req.csrfToken()
       });
     })
     .catch((err) => {
@@ -105,7 +103,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .populate("carts.items.productId")
+    .populate("cart.items.productId")
     .execPopulate()
     .then((user) => {
       const products = user.cart.items.map((i) => {
@@ -121,7 +119,7 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
     .then((result) => {
-      req.user.clearCart();
+      return req.user.clearCart();
     })
     .then(() => {
       res.redirect("/orders");
