@@ -14,8 +14,9 @@ const {
   getProduct,
   postCart,
   postCartDeleteProduct,
-  postOrder,
-  getInvoice
+  getCheckoutSuccess,
+  getInvoice,
+  getCheckout
 } = require("../controllers/shop");
 
 const router = express.Router();
@@ -32,7 +33,13 @@ router.post("/cart", isAuth, postCart);
 
 router.post("/cart-delete-item", isAuth, postCartDeleteProduct);
 
-router.post('/create-order', isAuth, postOrder);
+router.get('/checkout', isAuth, getCheckout);
+
+router.get('/checkout/success', getCheckoutSuccess);
+
+router.get('/checkout/cancel', getCheckout);
+
+// router.post('/create-order', isAuth, postOrder);
 
 router.get("/orders", isAuth, getOrders);
 
